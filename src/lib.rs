@@ -85,6 +85,9 @@ pub struct WalkSiblings<Ix: IndexType> {
     maybe_walk_children: Option<WalkChildren<Ix>>,
 }
 
+/// `RoseTree`'s API ensures that it always has a "root" node and that its index is always 0.
+pub const ROOT: usize = 0;
+
 
 impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
 
@@ -105,16 +108,6 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
     /// The total number of nodes in the RoseTree.
     pub fn node_count(&self) -> usize {
         self.graph.node_count()
-    }
-
-    /// Remove all nodes in the `RoseTree` except for the root.
-    pub fn remove_all_but_root(&mut self) {
-        // We can assume that the `root`'s index is zero, as it is always the first node to be
-        // added to the RoseTree.
-        if let Some(root) = self.graph.remove_node(NodeIndex::new(0)) {
-            self.graph.clear();
-            self.graph.add_node(root);
-        }
     }
 
     /// Borrow the `RoseTree`'s underlying `PetGraph<N, Ix>`.
@@ -161,6 +154,52 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
     /// **Panics** if the indices are equal or if they are out of bounds.
     pub fn index_twice_mut(&mut self, a: NodeIndex<Ix>, b: NodeIndex<Ix>) -> (&mut N, &mut N) {
         self.graph.index_twice_mut(a, b)
+    }
+
+    /// Remove all nodes in the `RoseTree` except for the root.
+    pub fn remove_all_but_root(&mut self) {
+        // We can assume that the `root`'s index is zero, as it is always the first node to be
+        // added to the RoseTree.
+        if let Some(root) = self.graph.remove_node(NodeIndex::new(0)) {
+            self.graph.clear();
+            self.graph.add_node(root);
+        }
+    }
+
+    /// Removes and returns the node at the given index.
+    ///
+    /// The parent of `node` will become the new parent for all of its children.
+    ///
+    /// The root node cannot be removed. If its index is given, `None` will be returned.
+    ///
+    /// Note: this method may shift other node indices, invalidating previously returned indices!
+    pub fn remove_node(&mut self, node: NodeIndex<Ix>) -> Option<N> {
+
+        // Check if an attempt to remove the root node has been made.
+        if node.index() == ROOT || self.graph.node_weight(node).is_none() {
+            return None;
+        }
+
+        // Now that we know we're not the root node, we know that we **must** have some parent.
+        let parent = self.parent(node).expect("No parent node found");
+
+        // For each of `node`'s children, set their parent to `node`'s parent.
+        let mut children = self.graph.walk_edges_directed(node, pg::Outgoing);
+        while let Some((child_edge, child_node)) = children.next_neighbor(&self.graph) {
+            self.graph.remove_edge(child_edge);
+            self.graph.add_edge(parent, child_node, ());
+        }
+
+        // Finally, remove our node and return it.
+        self.graph.remove_node(node)
+    }
+
+    /// Removes the node at the given index along with all their children, returning them as a new
+    /// RoseTree.
+    ///
+    /// If there was no node at the given index, `None` will be returned.
+    pub fn remove_node_with_children(&mut self, _node: NodeIndex<Ix>) -> Option<RoseTree<N, Ix>> {
+        unimplemented!();
     }
 
     /// An index to the parent of the node at the given index if there is one.
