@@ -1,10 +1,21 @@
+//! 
+//! **rose_tree** is a rose tree (aka multi-way tree) data structure library.
+//!
+//! The most prominent type is [**RoseTree**](./struct.RoseTree.html) - a wrapper around [petgraph]
+//! (http://bluss.github.io/petulant-avenger-graphlibrary/doc/petgraph/index.html)'s [**Graph**]
+//! (http://bluss.github.io/petulant-avenger-graphlibrary/doc/petgraph/graph/struct.Graph.html)
+//! data structure, exposing a refined API targeted towards rose tree related functionality.
+//!
 
+#![forbid(unsafe_code)]
+#![warn(docs)]
 
 extern crate petgraph as pg;
 
 
 pub use pg as petgraph;
-pub use pg::graph::{DefIndex, IndexType, NodeIndex};
+pub use pg::graph::NodeIndex;
+use pg::graph::{DefIndex, IndexType};
 
 
 /// The PetGraph to be used internally within the RoseTree for storing/managing Nodes and Edges.
@@ -47,6 +58,13 @@ pub struct RoseTree<N, Ix: IndexType = DefIndex> {
 }
 
 
+/// An iterator that yeilds an index to the parent of the current child before the setting the
+/// parent as the new current child. This occurs recursively until the root index is yeilded.
+pub struct ParentRecursion<'a, N: 'a, Ix: IndexType> {
+    rose_tree: &'a RoseTree<N, Ix>,
+    child: NodeIndex<Ix>,
+}
+
 /// An iterator yielding indices to the children of some node.
 pub type Children<'a, Ix> = pg::graph::Neighbors<'a, (), Ix>;
 
@@ -56,11 +74,15 @@ pub struct Siblings<'a, Ix: IndexType> {
     maybe_siblings: Option<Children<'a, Ix>>,
 }
 
-/// An iterator that yeilds an index to the parent of the current child before the setting the
-/// parent as the new current child. This occurs recursively until the root index is yeilded.
-pub struct ParentRecursion<'a, N: 'a, Ix: IndexType> {
-    rose_tree: &'a RoseTree<N, Ix>,
+/// A "walker" object that can be used to step through the children of some parent node.
+pub struct WalkChildren<Ix: IndexType> {
+    walk_edges: pg::graph::WalkEdges<Ix>,
+}
+
+/// A "walker" object that can be used to step through the siblings of some child node.
+pub struct WalkSiblings<Ix: IndexType> {
     child: NodeIndex<Ix>,
+    maybe_walk_children: Option<WalkChildren<Ix>>,
 }
 
 
@@ -160,12 +182,25 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
         self.graph.neighbors_directed(parent, pg::Outgoing)
     }
 
+    /// A "walker" object that may be used to step through the children of the given parent node.
+    ///
+    /// Unlike the `Children` type, `WalkChildren` does not borrow the `RoseTree`.
+    pub fn walk_children(&self, parent: NodeIndex<Ix>) -> WalkChildren<Ix> {
+        let walk_edges = self.graph.walk_edges_directed(parent, pg::Outgoing);
+        WalkChildren { walk_edges: walk_edges }
+    }
+
     /// An iterator over all nodes that are siblings to the node at the given index.
     ///
     /// The returned iterator yields `NodeIndex<Ix>`s.
     pub fn siblings(&self, child: NodeIndex<Ix>) -> Siblings<Ix> {
         let maybe_siblings = self.parent(child).map(|parent| self.children(parent));
         Siblings { child: child, maybe_siblings: maybe_siblings }
+    }
+
+    pub fn walk_siblings(&self, child: NodeIndex<Ix>) -> WalkSiblings<Ix> {
+        let maybe_walk_children = self.parent(child).map(|parent| self.walk_children(parent));
+        WalkSiblings { child: child, maybe_walk_children: maybe_walk_children }
     }
 
 }
@@ -202,6 +237,28 @@ impl<'a, N, Ix> Iterator for ParentRecursion<'a, N, Ix> where Ix: IndexType {
     fn next(&mut self) -> Option<NodeIndex<Ix>> {
         let ParentRecursion { ref mut child, ref rose_tree } = *self;
         rose_tree.parent(*child).map(|parent| { *child = parent; parent })
+    }
+}
+
+
+impl<Ix> WalkChildren<Ix> where Ix: IndexType {
+    /// Fetch the next child index in the walk for the given `RoseTree`.
+    pub fn next<N>(&mut self, tree: &RoseTree<N, Ix>) -> Option<NodeIndex<Ix>> {
+        self.walk_edges.next_neighbor(&tree.graph).map(|(_, n)| n)
+    }
+}
+
+impl<Ix> WalkSiblings<Ix> where Ix: IndexType {
+    /// Fetch the next sibling index in the walk for the given `RoseTree`.
+    pub fn next<N>(&mut self, tree: &RoseTree<N, Ix>) -> Option<NodeIndex<Ix>> {
+        let WalkSiblings { child, ref mut maybe_walk_children } = *self;
+        maybe_walk_children.as_mut().and_then(|walk_children| {
+            walk_children.next(tree).and_then(|sibling| if child != sibling {
+                Some(sibling)
+            } else {
+                walk_children.next(tree)
+            })
+        })
     }
 }
 
