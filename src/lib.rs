@@ -18,7 +18,8 @@ pub type PetGraph<N, Ix> = pg::Graph<N, (), pg::Directed, Ix>;
 /// See the [wikipedia article on the "Rose tree" data
 /// structure](https://en.wikipedia.org/wiki/Rose_tree).
 ///
-/// Note: The following documentation is adapted from petgraph's **Graph** documentation.
+/// Note: The following documentation is adapted from petgraph's [**Graph** documentation]
+/// (http://bluss.github.io/petulant-avenger-graphlibrary/doc/petgraph/graph/struct.Graph.html).
 ///
 /// **RoseTree** is parameterized over the node weight **N** and **Ix** which is the index type
 /// used.
