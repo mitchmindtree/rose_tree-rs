@@ -1,18 +1,14 @@
 language: rust
-
 rust:
-    - nightly
-    - stable
-
+- nightly
+- stable
 env:
-    global:
-        secure: qlflwsinhvNorlh6l4Hl3tQDytF/LTzlUmw3hA4yj7pwEFUP4BORTvNIlJa+DCft4P4aEU0pgCsC8eb+MQ+q1WOQr2e+EfE+KT/FS9pT6RvqyYUs4QaEznbJkHxMjzkU2N5jf6RGssIEx3ieXD1y+LETxk+KIBFY8DN+wmMYjas=
-
+  global:
+  - secure: M3h/iz2c3oG6crvECSREgvEeU5CzBFFEwEtJLx7zOyGTv8JlHmcISrRDpt85+VqqV9AOMge4VEofrP9qDNKDHBXkSnQWy++gCtMtMuv5JQYHx5QIm0F14bBeosLjWdpQtF6fgJ9f8ClJAlsdy2CQH4yW3jEfergrjEAOHj53WTDVK/ut2MOjLvxB2NFQtcz3ycWsMxSw1I8ES78pn+MakjpL1BDnOkVGD8sgyCyM+rCER+NGfwQq098pjp9Lum45VOLtTtPXyC+IjHYe717291c80tJsCmB80KApFv1C+vBFLmmn60j0Chz2SIY7ytN3EXibA1FS6UzDdOZ5HiVhSfAAALc6X1Qy6S08gWuLMp94WZUC8LQppo3eaDvbxH6HexTrLqLh7JKNts8kMZCpw/dqvv8I5/TnSsel5J/ZjAwjalsztkYI1hpx7emJx2R12LhSidAVJ3rAY0siKg9tBk+O5d51g2zrMpC6vC00R4oQYbnUAGEkjA38sUVVBFhqZ2G/sO0bWCXzD1OUwsImBHgqFgv7wlTSj7USeDERIH095L6v9BVKAHxujgFOvZsNgyIx/8G26IkmEVD4WcZFFX7rlmK1fJiGDsFoZxeDLzumk1U7J8IsfLnf+aA4dNVB/1cWK5EesWDTq+KJ2W2qv5REdDv6EpHdFGcmu1bA+u8=
 script:
-    - cargo build --verbose
-    - cargo test --verbose
-    - cargo doc --verbose
-
+- cargo build --verbose
+- cargo test --verbose
+- cargo doc --verbose
 after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
