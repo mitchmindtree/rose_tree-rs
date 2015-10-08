@@ -8,3 +8,31 @@ It is Implemented on top of [petgraph](https://github.com/bluss/petulant-avenger
 
 [Documentation](http://mitchmindtree.github.io/rose_tree-rs/rose_tree)
 ---------------
+
+Usage
+-----
+
+Please see the [tests directory](https://github.com/mitchmindtree/rose_tree-rs/tree/master/tests) for some basic usage examples.
+
+Use rose_tree in your project by adding it to your Cargo.toml dependencies like so:
+
+```toml
+[dependencies]
+rose_tree = "*"
+```
+
+and then adding
+
+```rust
+extern crate rose_tree;
+```
+
+to your lib.rs.
+
+
+License
+-------
+
+Dual-licensed to be compatible with the petgraph and Rust projects.
+
+Licensed under the Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0 or the MIT license http://opensource.org/licenses/MIT, at your option. This file may not be copied, modified, or distributed except according to those terms.
