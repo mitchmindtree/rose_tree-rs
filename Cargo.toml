@@ -1,6 +1,6 @@
 [package]
 name = "rose_tree"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["mitchmindtree <mitchell.nordine@gmail.com>"]
 description = "An indexable tree data structure with a variable and unbounded number of branches per node. It is Implemented on top of petgraph's Graph data structure and attempts to follow similar conventions where suitable."
 readme = "README.md"
