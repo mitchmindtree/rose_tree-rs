@@ -1,4 +1,4 @@
-# rose_tree [![Build Status](https://travis-ci.org/mitchmindtree/rose_tree-rs.svg?branch=master)](https://travis-ci.org/mitchmindtree/rose_tree-rs)[![Crates.io](https://img.shields.io/crates/v/rose_tree.svg)](https://crates.io/crates/rose_tree) [![Crates.io](https://img.shields.io/crates/l/rose_tree.svg)](https://github.com/mitchmindtree/rose_tree-rs/blob/master/LICENSE-MIT)
+# rose_tree [![Build Status](https://travis-ci.org/mitchmindtree/rose_tree-rs.svg?branch=master)](https://travis-ci.org/mitchmindtree/rose_tree-rs) [![Crates.io](https://img.shields.io/crates/v/rose_tree.svg)](https://crates.io/crates/rose_tree) [![Crates.io](https://img.shields.io/crates/l/rose_tree.svg)](https://github.com/mitchmindtree/rose_tree-rs/blob/master/LICENSE-MIT)
 
 An implementation of the [**rose tree** (aka **multi-way tree**) data structure](https://en.wikipedia.org/wiki/Rose_tree) for Rust.
 
