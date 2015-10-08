@@ -125,3 +125,4 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
 
 }
 
+
