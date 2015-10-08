@@ -46,6 +46,23 @@ pub struct RoseTree<N, Ix: IndexType = DefIndex> {
 }
 
 
+/// An iterator yielding indices to the children of some node.
+pub type Children<'a, Ix> = pg::graph::Neighbors<'a, (), Ix>;
+
+/// An iterator yielding indices to the siblings of some child node.
+pub struct Siblings<'a, Ix: IndexType> {
+    child: NodeIndex<Ix>,
+    maybe_siblings: Option<Children<'a, Ix>>,
+}
+
+/// An iterator that yeilds an index to the parent of the current child before the setting the
+/// parent as the new current child. This occurs recursively until the root index is yeilded.
+pub struct ParentRecursion<'a, N: 'a, Ix: IndexType> {
+    rose_tree: &'a RoseTree<N, Ix>,
+    child: NodeIndex<Ix>,
+}
+
+
 impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
 
     /// Create a new `RoseTree` along with some root Node.
@@ -80,7 +97,7 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
     /// Borrow the `RoseTree`'s underlying `PetGraph<N, Ix>`.
     /// All existing `NodeIndex`s may be used to index into this graph the same way they may be
     /// used to index into the `RoseTree`.
-    pub fn graph_ref(&self) -> &PetGraph<N, Ix> {
+    pub fn graph(&self) -> &PetGraph<N, Ix> {
         &self.graph
     }
 
@@ -123,6 +140,67 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
         self.graph.index_twice_mut(a, b)
     }
 
+    /// An index to the parent of the node at the given index if there is one.
+    pub fn parent(&self, child: NodeIndex<Ix>) -> Option<NodeIndex<Ix>> {
+        self.graph.neighbors_directed(child, pg::Incoming).next()
+    }
+
+    /// An iterator over the given child's parent, that parent's parent and so forth.
+    ///
+    /// The returned iterator yields `NodeIndex<Ix>`s.
+    pub fn parent_recursion(&self, child: NodeIndex<Ix>) -> ParentRecursion<N, Ix> {
+        ParentRecursion { rose_tree: self, child: child }
+    }
+
+    /// An iterator over all nodes that are children to the node at the given index.
+    ///
+    /// The returned iterator yields `NodeIndex<Ix>`s.
+    pub fn children(&self, parent: NodeIndex<Ix>) -> Children<Ix> {
+        self.graph.neighbors_directed(parent, pg::Outgoing)
+    }
+
+    /// An iterator over all nodes that are siblings to the node at the given index.
+    ///
+    /// The returned iterator yields `NodeIndex<Ix>`s.
+    pub fn siblings(&self, child: NodeIndex<Ix>) -> Siblings<Ix> {
+        let maybe_siblings = self.parent(child).map(|parent| self.children(parent));
+        Siblings { child: child, maybe_siblings: maybe_siblings }
+    }
+
 }
 
+
+impl<N, Ix> ::std::ops::Index<NodeIndex<Ix>> for RoseTree<N, Ix> where Ix: IndexType {
+    type Output = N;
+    fn index(&self, index: NodeIndex<Ix>) -> &N {
+        &self.graph[index]
+    }
+}
+
+impl<N, Ix> ::std::ops::IndexMut<NodeIndex<Ix>> for RoseTree<N, Ix> where Ix: IndexType {
+    fn index_mut(&mut self, index: NodeIndex<Ix>) -> &mut N {
+        &mut self.graph[index]
+    }
+}
+
+
+impl<'a, Ix> Iterator for Siblings<'a, Ix> where Ix: IndexType {
+    type Item = NodeIndex<Ix>;
+    fn next(&mut self) -> Option<NodeIndex<Ix>> {
+        let Siblings { child, ref mut maybe_siblings } = *self;
+        maybe_siblings.as_mut().and_then(|siblings| {
+            siblings.next().and_then(|sibling| {
+                if sibling != child { Some(sibling) } else { siblings.next() }
+            })
+        })
+    }
+}
+
+impl<'a, N, Ix> Iterator for ParentRecursion<'a, N, Ix> where Ix: IndexType {
+    type Item = NodeIndex<Ix>;
+    fn next(&mut self) -> Option<NodeIndex<Ix>> {
+        let ParentRecursion { ref mut child, ref rose_tree } = *self;
+        rose_tree.parent(*child).map(|parent| { *child = parent; parent })
+    }
+}
 
