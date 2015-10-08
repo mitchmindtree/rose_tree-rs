@@ -6,8 +6,12 @@ An indexable tree data structure with a variable and unbounded number of branche
 
 It is Implemented on top of [petgraph](https://github.com/bluss/petulant-avenger-graphlibrary)'s [Graph](http://bluss.github.io/petulant-avenger-graphlibrary/doc/petgraph/graph/struct.Graph.html) data structure and attempts to follow similar conventions where suitable.
 
-[Documentation](http://mitchmindtree.github.io/rose_tree-rs/rose_tree)
----------------
+
+Documentation
+-------------
+
+[API documentation here!](http://mitchmindtree.github.io/rose_tree-rs/rose_tree)
+
 
 Usage
 -----
