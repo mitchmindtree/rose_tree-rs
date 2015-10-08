@@ -8,7 +8,7 @@
 //!
 
 #![forbid(unsafe_code)]
-#![warn(docs)]
+#![warn(missing_docs)]
 
 extern crate petgraph as pg;
 
@@ -18,7 +18,7 @@ pub use pg::graph::NodeIndex;
 use pg::graph::{DefIndex, IndexType};
 
 
-/// The PetGraph to be used internally within the RoseTree for storing/managing Nodes and Edges.
+/// The PetGraph to be used internally within the RoseTree for storing/managing nodes and edges.
 pub type PetGraph<N, Ix> = pg::Graph<N, (), pg::Directed, Ix>;
 
 
@@ -53,7 +53,7 @@ pub type PetGraph<N, Ix> = pg::Graph<N, (), pg::Directed, Ix>;
 /// for taking advantage of petgraph's various graph-related algorithms.
 #[derive(Clone, Debug)]
 pub struct RoseTree<N, Ix: IndexType = DefIndex> {
-    /// A graph for storing all Nodes and edges between them that represent the tree.
+    /// A graph for storing all nodes and edges between them that represent the tree.
     graph: PetGraph<N, Ix>,
 }
 
@@ -88,14 +88,14 @@ pub struct WalkSiblings<Ix: IndexType> {
 
 impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
 
-    /// Create a new `RoseTree` along with some root Node.
-    /// Returns both the `RoseTree` and an index into the root Node in a tuple.
+    /// Create a new `RoseTree` along with some root node.
+    /// Returns both the `RoseTree` and an index into the root node in a tuple.
     pub fn new(root: N) -> (Self, NodeIndex<Ix>) {
         Self::with_capacity(1, root)
     }
 
-    /// Create a new `RoseTree` with estimated capacity and some root Node.
-    /// Returns both the `RoseTree` and an index into the root Node in a tuple.
+    /// Create a new `RoseTree` with estimated capacity and some root node.
+    /// Returns both the `RoseTree` and an index into the root node in a tuple.
     pub fn with_capacity(nodes: usize, root: N) -> (Self, NodeIndex<Ix>) {
         let mut graph = PetGraph::with_capacity(nodes, nodes);
         let root = graph.add_node(root);
@@ -132,7 +132,7 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
         graph
     }
 
-    /// Add a child Node to the Node at the given NodeIndex.
+    /// Add a child node to the node at the given NodeIndex.
     /// Returns an index into the child's position within the tree.
     ///
     /// Computes in **O(1)** time.
@@ -198,6 +198,9 @@ impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
         Siblings { child: child, maybe_siblings: maybe_siblings }
     }
 
+    /// A "walker" object that may be used to step through the siblings of the given child node.
+    ///
+    /// Unlike the `Siblings` type, `WalkSiblings` does not borrow the `RoseTree`.
     pub fn walk_siblings(&self, child: NodeIndex<Ix>) -> WalkSiblings<Ix> {
         let maybe_walk_children = self.parent(child).map(|parent| self.walk_children(parent));
         WalkSiblings { child: child, maybe_walk_children: maybe_walk_children }
