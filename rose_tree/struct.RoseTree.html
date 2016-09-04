@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `RoseTree` struct in crate `rose_tree`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, RoseTree">
+
+    <title>rose_tree::RoseTree - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>rose_tree</a></p><script>window.sidebarCurrent = {name: 'RoseTree', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>rose_tree</a>::<wbr><a class='struct' href=''>RoseTree</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a id='src-25' class='srclink' href='../src/rose_tree/src/lib.rs.html#54-57' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct RoseTree&lt;N,&nbsp;Ix:&nbsp;<a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&nbsp;=&nbsp;<a class='type' href='../petgraph/graph/type.DefIndex.html' title='petgraph::graph::DefIndex'>DefIndex</a>&gt; {
+    // some fields omitted
+}</pre><div class='docblock'><p>An indexable tree data structure with a variable and unbounded number of branches per node.</p>
+
+<p>Also known as a multi-way tree.</p>
+
+<p>See the <a href="https://en.wikipedia.org/wiki/Rose_tree">wikipedia article on the &quot;Rose tree&quot; data
+structure</a>.</p>
+
+<p>Note: The following documentation is adapted from petgraph&#39;s <a href="http://bluss.github.io/petulant-avenger-graphlibrary/doc/petgraph/graph/struct.Graph.html"><strong>Graph</strong> documentation</a>.</p>
+
+<p><strong>RoseTree</strong> is parameterized over the node weight <strong>N</strong> and <strong>Ix</strong> which is the index type
+used.</p>
+
+<p>A wrapper around petgraph&#39;s <strong>Graph</strong> data structure with a refined API specifically targeted
+towards use as a <strong>RoseTree</strong>.</p>
+
+<p><strong>NodeIndex</strong> is a type that acts as a reference to nodes, but these are only stable across
+certain operations. <strong>Removing nodes may shift other indices.</strong> Adding kids to the <strong>RoseTree</strong>
+keeps all indices stable, but removing a node will force the last node to shift its index to
+take its place.</p>
+
+<p>The fact that the node indices in the <strong>RoseTree</strong> are numbered in a compact interval from 0 to
+<em>n</em>-1 simplifies some graph algorithms.</p>
+
+<p>The <strong>Ix</strong> parameter is u32 by default. The goal is that you can ignore this parameter
+completely unless you need a very large <strong>RoseTree</strong> -- then you can use usize.</p>
+
+<p>The <strong>RoseTree</strong> also offers methods for accessing the underlying <strong>Graph</strong>, which can be useful
+for taking advantage of petgraph&#39;s various graph-related algorithms.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;N,&nbsp;Ix&gt; <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-51' class='srclink' href='../src/rose_tree/src/lib.rs.html#91-247' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(root: N) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a>Self, <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a></code></h4>
+<div class='docblock'><p>Create a new <code>RoseTree</code> along with some root node.
+Returns both the <code>RoseTree</code> and an index into the root node in a tuple.</p>
+</div><h4 id='method.with_capacity' class='method'><code>fn <a href='#method.with_capacity' class='fnname'>with_capacity</a>(nodes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, root: N) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a>Self, <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a></code></h4>
+<div class='docblock'><p>Create a new <code>RoseTree</code> with estimated capacity and some root node.
+Returns both the <code>RoseTree</code> and an index into the root node in a tuple.</p>
+</div><h4 id='method.node_count' class='method'><code>fn <a href='#method.node_count' class='fnname'>node_count</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a></code></h4>
+<div class='docblock'><p>The total number of nodes in the RoseTree.</p>
+</div><h4 id='method.graph' class='method'><code>fn <a href='#method.graph' class='fnname'>graph</a>(&amp;self) -&gt; &amp;<a class='type' href='../rose_tree/type.PetGraph.html' title='rose_tree::PetGraph'>PetGraph</a>&lt;N,&nbsp;Ix&gt;</code></h4>
+<div class='docblock'><p>Borrow the <code>RoseTree</code>&#39;s underlying <code>PetGraph&lt;N, Ix&gt;</code>.
+All existing <code>NodeIndex</code>s may be used to index into this graph the same way they may be
+used to index into the <code>RoseTree</code>.</p>
+</div><h4 id='method.into_graph' class='method'><code>fn <a href='#method.into_graph' class='fnname'>into_graph</a>(self) -&gt; <a class='type' href='../rose_tree/type.PetGraph.html' title='rose_tree::PetGraph'>PetGraph</a>&lt;N,&nbsp;Ix&gt;</code></h4>
+<div class='docblock'><p>Take ownership of the RoseTree and return the internal PetGraph<N, Ix>.
+All existing <code>NodeIndex</code>s may be used to index into this graph the same way they may be
+used to index into the <code>RoseTree</code>.</p>
+</div><h4 id='method.add_child' class='method'><code>fn <a href='#method.add_child' class='fnname'>add_child</a>(&amp;mut self, parent: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;, kid: N) -&gt; <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>Add a child node to the node at the given NodeIndex.
+Returns an index into the child&#39;s position within the tree.</p>
+
+<p>Computes in <strong>O(1)</strong> time.</p>
+
+<p><strong>Panics</strong> if the given parent node doesn&#39;t exist.</p>
+
+<p><strong>Panics</strong> if the Graph is at the maximum number of edges for its index.</p>
+</div><h4 id='method.node_weight' class='method'><code>fn <a href='#method.node_weight' class='fnname'>node_weight</a>(&amp;self, node: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;N&gt;</code></h4>
+<div class='docblock'><p>Borrow the weight from the node at the given index.</p>
+</div><h4 id='method.node_weight_mut' class='method'><code>fn <a href='#method.node_weight_mut' class='fnname'>node_weight_mut</a>(&amp;mut self, node: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;mut N&gt;</code></h4>
+<div class='docblock'><p>Mutably borrow the weight from the node at the given index.</p>
+</div><h4 id='method.index_twice_mut' class='method'><code>fn <a href='#method.index_twice_mut' class='fnname'>index_twice_mut</a>(&amp;mut self, a: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;, b: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(</a>&amp;mut N, &amp;mut N<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>)</a></code></h4>
+<div class='docblock'><p>Index the <code>RoseTree</code> by two node indices.</p>
+
+<p><strong>Panics</strong> if the indices are equal or if they are out of bounds.</p>
+</div><h4 id='method.remove_all_but_root' class='method'><code>fn <a href='#method.remove_all_but_root' class='fnname'>remove_all_but_root</a>(&amp;mut self)</code></h4>
+<div class='docblock'><p>Remove all nodes in the <code>RoseTree</code> except for the root.</p>
+</div><h4 id='method.remove_node' class='method'><code>fn <a href='#method.remove_node' class='fnname'>remove_node</a>(&amp;mut self, node: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;N&gt;</code></h4>
+<div class='docblock'><p>Removes and returns the node at the given index.</p>
+
+<p>The parent of <code>node</code> will become the new parent for all of its children.</p>
+
+<p>The root node cannot be removed. If its index is given, <code>None</code> will be returned.</p>
+
+<p>Note: this method may shift other node indices, invalidating previously returned indices!</p>
+</div><h4 id='method.remove_node_with_children' class='method'><code>fn <a href='#method.remove_node_with_children' class='fnname'>remove_node_with_children</a>(&amp;mut self, _node: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt;&gt;</code></h4>
+<div class='docblock'><p>Removes the node at the given index along with all their children, returning them as a new
+RoseTree.</p>
+
+<p>If there was no node at the given index, <code>None</code> will be returned.</p>
+</div><h4 id='method.parent' class='method'><code>fn <a href='#method.parent' class='fnname'>parent</a>(&amp;self, child: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt;</code></h4>
+<div class='docblock'><p>An index to the parent of the node at the given index if there is one.</p>
+</div><h4 id='method.parent_recursion' class='method'><code>fn <a href='#method.parent_recursion' class='fnname'>parent_recursion</a>(&amp;self, child: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../rose_tree/struct.ParentRecursion.html' title='rose_tree::ParentRecursion'>ParentRecursion</a>&lt;N,&nbsp;Ix&gt;</code></h4>
+<div class='docblock'><p>An iterator over the given child&#39;s parent, that parent&#39;s parent and so forth.</p>
+
+<p>The returned iterator yields <code>NodeIndex&lt;Ix&gt;</code>s.</p>
+</div><h4 id='method.children' class='method'><code>fn <a href='#method.children' class='fnname'>children</a>(&amp;self, parent: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='type' href='../rose_tree/type.Children.html' title='rose_tree::Children'>Children</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>An iterator over all nodes that are children to the node at the given index.</p>
+
+<p>The returned iterator yields <code>NodeIndex&lt;Ix&gt;</code>s.</p>
+</div><h4 id='method.walk_children' class='method'><code>fn <a href='#method.walk_children' class='fnname'>walk_children</a>(&amp;self, parent: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../rose_tree/struct.WalkChildren.html' title='rose_tree::WalkChildren'>WalkChildren</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>A &quot;walker&quot; object that may be used to step through the children of the given parent node.</p>
+
+<p>Unlike the <code>Children</code> type, <code>WalkChildren</code> does not borrow the <code>RoseTree</code>.</p>
+</div><h4 id='method.siblings' class='method'><code>fn <a href='#method.siblings' class='fnname'>siblings</a>(&amp;self, child: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../rose_tree/struct.Siblings.html' title='rose_tree::Siblings'>Siblings</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>An iterator over all nodes that are siblings to the node at the given index.</p>
+
+<p>The returned iterator yields <code>NodeIndex&lt;Ix&gt;</code>s.</p>
+</div><h4 id='method.walk_siblings' class='method'><code>fn <a href='#method.walk_siblings' class='fnname'>walk_siblings</a>(&amp;self, child: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; <a class='struct' href='../rose_tree/struct.WalkSiblings.html' title='rose_tree::WalkSiblings'>WalkSiblings</a>&lt;Ix&gt;</code></h4>
+<div class='docblock'><p>A &quot;walker&quot; object that may be used to step through the siblings of the given child node.</p>
+
+<p>Unlike the <code>Siblings</code> type, <code>WalkSiblings</code> does not borrow the <code>RoseTree</code>.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;N:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a>,&nbsp;Ix:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> + <a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-11' class='srclink' href='../src/rose_tree/src/lib.rs.html#53' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;N:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>,&nbsp;Ix:&nbsp;<a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> + <a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a>&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a id='src-19' class='srclink' href='../src/rose_tree/src/lib.rs.html#53' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt;</code></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;N,&nbsp;Ix&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html' title='core::ops::Index'>Index</a>&lt;<a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt; for <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-122' class='srclink' href='../src/rose_tree/src/lib.rs.html#250-255' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Output' class='type'><code>type <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html#associatedtype.Output' class='type'>Output</a> = N</code></h4>
+<div class='docblock'><p>The returned type after indexing</p>
+</div><h4 id='method.index' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Index.html#tymethod.index' class='fnname'>index</a>(&amp;self, index: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; &amp;N</code></h4>
+<div class='docblock'><p>The method for the indexing (<code>Foo[Bar]</code>) operation</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;N,&nbsp;Ix&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html' title='core::ops::IndexMut'>IndexMut</a>&lt;<a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;&gt; for <a class='struct' href='../rose_tree/struct.RoseTree.html' title='rose_tree::RoseTree'>RoseTree</a>&lt;N,&nbsp;Ix&gt; <span class='where'>where Ix: <a class='trait' href='../petgraph/graph/trait.IndexType.html' title='petgraph::graph::IndexType'>IndexType</a></span></code></span><span class='out-of-band'><div class='ghost'></div><a id='src-129' class='srclink' href='../src/rose_tree/src/lib.rs.html#257-261' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.index_mut' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.IndexMut.html#tymethod.index_mut' class='fnname'>index_mut</a>(&amp;mut self, index: <a class='struct' href='../rose_tree/struct.NodeIndex.html' title='rose_tree::NodeIndex'>NodeIndex</a>&lt;Ix&gt;) -&gt; &amp;mut N</code></h4>
+<div class='docblock'><p>The method for the indexing (<code>Foo[Bar]</code>) operation</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "rose_tree";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
