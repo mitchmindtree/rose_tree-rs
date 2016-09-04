@@ -10,12 +10,11 @@
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
 
-extern crate petgraph as pg;
+pub extern crate petgraph;
+use petgraph as pg;
 
-
-pub use pg as petgraph;
-pub use pg::graph::NodeIndex;
-use pg::graph::{DefIndex, IndexType};
+pub use petgraph::graph::NodeIndex;
+use petgraph::graph::{DefIndex, IndexType};
 
 
 /// The PetGraph to be used internally within the RoseTree for storing/managing nodes and edges.
@@ -89,7 +88,7 @@ pub struct WalkSiblings<Ix: IndexType> {
 pub const ROOT: usize = 0;
 
 
-impl<N, Ix = DefIndex> RoseTree<N, Ix> where Ix: IndexType {
+impl<N, Ix> RoseTree<N, Ix> where Ix: IndexType {
 
     /// Create a new `RoseTree` along with some root node.
     /// Returns both the `RoseTree` and an index into the root node in a tuple.
