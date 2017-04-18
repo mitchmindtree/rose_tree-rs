@@ -1,4 +1,4 @@
-//! 
+//!
 //! **rose_tree** is a rose tree (aka multi-way tree) data structure library.
 //!
 //! The most prominent type is [**RoseTree**](./struct.RoseTree.html) - a wrapper around [petgraph]
@@ -114,6 +114,13 @@ impl<N, Ix> RoseTree<N, Ix> where Ix: IndexType {
     /// used to index into the `RoseTree`.
     pub fn graph(&self) -> &PetGraph<N, Ix> {
         &self.graph
+    }
+
+    /// Borrow a mutable reference to the `RoseTree`'s underlying `PetGraph<N, Ix>`.
+    /// All existing `NodeIndex`s may be used to index into this graph the same way they may be
+    /// used to index into the `RoseTree`.
+    pub fn graph_mut(&mut self) -> &mut PetGraph<N, Ix> {
+        &mut self.graph
     }
 
     /// Take ownership of the RoseTree and return the internal PetGraph<N, Ix>.
