@@ -13,8 +13,10 @@
 pub extern crate petgraph;
 use petgraph as pg;
 
+use petgraph::graph::IndexType;
 pub use petgraph::graph::NodeIndex;
-use petgraph::graph::{DefIndex, IndexType};
+
+type DefIndex = u32;
 
 /// The PetGraph to be used internally within the RoseTree for storing/managing nodes and edges.
 pub type PetGraph<N, Ix> = pg::Graph<N, (), pg::Directed, Ix>;
@@ -72,7 +74,7 @@ pub struct Siblings<'a, Ix: IndexType> {
 
 /// A "walker" object that can be used to step through the children of some parent node.
 pub struct WalkChildren<Ix: IndexType> {
-    walk_edges: pg::graph::WalkEdges<Ix>,
+    walk_edges: pg::graph::WalkNeighbors<Ix>,
 }
 
 /// A "walker" object that can be used to step through the siblings of some child node.
@@ -180,8 +182,8 @@ where
         let parent = self.parent(node).expect("No parent node found");
 
         // For each of `node`'s children, set their parent to `node`'s parent.
-        let mut children = self.graph.walk_edges_directed(node, pg::Outgoing);
-        while let Some((child_edge, child_node)) = children.next_neighbor(&self.graph) {
+        let mut children = self.graph.neighbors_directed(node, pg::Outgoing).detach();
+        while let Some((child_edge, child_node)) = children.next(&self.graph) {
             self.graph.remove_edge(child_edge);
             self.graph.add_edge(parent, child_node, ());
         }
@@ -224,7 +226,7 @@ where
     ///
     /// Unlike the `Children` type, `WalkChildren` does not borrow the `RoseTree`.
     pub fn walk_children(&self, parent: NodeIndex<Ix>) -> WalkChildren<Ix> {
-        let walk_edges = self.graph.walk_edges_directed(parent, pg::Outgoing);
+        let walk_edges = self.graph.neighbors_directed(parent, pg::Outgoing).detach();
         WalkChildren { walk_edges }
     }
 
@@ -315,7 +317,7 @@ where
 {
     /// Fetch the next child index in the walk for the given `RoseTree`.
     pub fn next<N>(&mut self, tree: &RoseTree<N, Ix>) -> Option<NodeIndex<Ix>> {
-        self.walk_edges.next_neighbor(&tree.graph).map(|(_, n)| n)
+        self.walk_edges.next(&tree.graph).map(|(_, n)| n)
     }
 }
 
