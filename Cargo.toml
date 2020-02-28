@@ -11,4 +11,4 @@ homepage = "https://github.com/mitchmindtree/rose_tree-rs"
 
 
 [dependencies]
-petgraph = "0.1.11"
+petgraph = "0.5"
