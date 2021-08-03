@@ -1,14 +1,11 @@
-
 extern crate rose_tree;
 
 use rose_tree::RoseTree;
 
 struct Weight;
 
-
 #[test]
 fn walk_children() {
-
     let (mut tree, root) = RoseTree::<Weight, u32>::new(Weight);
     let a = tree.add_child(root, Weight);
     let b = tree.add_child(root, Weight);
@@ -31,10 +28,8 @@ fn walk_children() {
     assert_eq!(None, child_walker.next(&tree));
 }
 
-
 #[test]
 fn walk_siblings() {
-
     let (mut tree, root) = RoseTree::<Weight, u32>::new(Weight);
     let a = tree.add_child(root, Weight);
     let b = tree.add_child(root, Weight);
@@ -47,4 +42,3 @@ fn walk_siblings() {
     assert_eq!(Some(b), sibling_walker.next(&tree));
     assert_eq!(None, sibling_walker.next(&tree));
 }
-
